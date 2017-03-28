@@ -1,0 +1,7 @@
+.Board {
+  text-align: center;
+  height: 280px;
+  margin: 15px;
+  background-color: #BDBDBD; 
+  border-style: inset;
+}
