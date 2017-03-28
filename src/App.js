@@ -9,7 +9,7 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
-          <h2>Welcome to React Minesweeper</h2>
+          <h2>Welcome to Lionel's React Minesweeper</h2>
         </div>
         <Options />
         <Game />

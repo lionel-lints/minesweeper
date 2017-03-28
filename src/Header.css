@@ -4,4 +4,29 @@
   margin: 15px;
   background-color: #BDBDBD; 
   border-style: inset;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.Counter {
+  background-color: #222; 
+  height: 50px;
+  width: 90px;
+  color: red;
+  font-size: 60px;
+  font-height: 68px;
+  font-family:'digital-clock-font';
+}
+
+.Facey {
+  height: 100%;
+  border-style: outset;
+  border-width: 4px;
+  background-color: #BDBDBD;
+}
+
+@font-face{
+ font-family:'digital-clock-font';
+ src: url('../public/DS-DIGIB.TTF');
 }

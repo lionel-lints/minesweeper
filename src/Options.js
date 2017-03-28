@@ -5,6 +5,15 @@ class Options extends Component {
   render() {
     return (
       <div className="Options">
+        <div>
+          Game
+        </div>
+        <div>
+          Options
+        </div>
+        <div>
+          Help
+        </div>
       </div>
     );
   }

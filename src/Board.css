@@ -4,4 +4,14 @@
   margin: 15px;
   background-color: #BDBDBD; 
   border-style: inset;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+.Tile {
+  height: 10%;
+  width: 10%;
+  background-color: #BDBDBD; 
+  border-style: outset;
 }
