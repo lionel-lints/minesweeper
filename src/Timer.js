@@ -7,30 +7,10 @@ class Timer extends Component {
     this.state = {time:'000'};
   }
 
-  tick() {
-    let newTime = this.state.time.split('');
-    newTime = newTime.map((digit) => { return Number(digit) });
-    if (newTime[0] + newTime[1] + newTime[2] === 27) return;
-    if (newTime[2] + 1 === 10){
-      if (newTime[1] + 1 === 10) {
-        newTime[0] += 1;
-        newTime[1] = 0;
-        newTime[2] = 0;
-      } else {
-        newTime[1] += 1;
-        newTime[2] = 0;
-      }
-    } else {
-      newTime[2] += 1;
-    }
-    newTime = newTime.map((digit) => { return (digit).toString() }).join('');
-    this.setState({ time: newTime });
-    return newTime;
-  }
 
   componentDidMount() {
     this.timerID = setInterval(() => {
-      this.tick()
+      this.props.tick()
     }, 1000);
   }
 
@@ -41,7 +21,7 @@ class Timer extends Component {
   render() {
     return (
       <div className="Timer">
-        {this.state.time} 
+        {this.props.time} 
       </div>
     );
   }

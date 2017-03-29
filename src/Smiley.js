@@ -25,7 +25,7 @@ class Smiley extends Component {
   render() {
     this.whichSmiley();
     return (
-      <div className="Smiley">
+      <div className="Smiley" onClick={this.props.reset}>
         <img className="faceIcons" src={this.smiley} alt="smiley face icon" />
       </div>
     );

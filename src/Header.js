@@ -17,7 +17,10 @@ class Header extends Component {
       <div className="Header">
         <BombCount bombs={this.props.bombs} />
         <Smiley smiley={this.props.smiley} reset={this.props.reset}/>
-        <Timer data-value="clock"/>
+        <Timer 
+          time={this.props.time}
+          tick={this.props.tick}
+          data-value="clock"/>
       </div>
     );
   }

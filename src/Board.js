@@ -17,8 +17,9 @@ class Board extends Component {
         {
           this.props.list.map((tile, i) => {
             return <Tile 
-              key={i} 
-              data-tile={tile}
+              addBombs={this.props.addBombs}
+              dataTile={tile}
+              key={tile.id} 
               smileyMouseDown={this.props.smileyMouseDown}
               smileyMouseUp={this.props.smileyMouseUp}
             />;

@@ -12,6 +12,10 @@ class Tile extends Component {
   }
 
   handleClick = () => {
+    if(!this.props.active){
+      this.props.addBombs(this.props.dataTile.id);
+    }
+
     this.props.smileyMouseUp();
     // preflight check: if game is complete, reset game(unmount and remount the whole game component).
     // first check if game hasn't been populated, 
@@ -30,10 +34,15 @@ class Tile extends Component {
     return (
       <div 
         className="Tile" 
+        active={this.props.active}
         onMouseDown={this.props.smileyMouseDown}
         onMouseUp={this.handleClick}
       >
-        {/* <img className='icons' src={this.flag} alt="" /> */ }
+        {
+          this.props.dataTile.value === 0 ?
+            <img className='icons' src={this.flag} alt="" /> :
+            ''
+        }
       </div>
     );
   }
