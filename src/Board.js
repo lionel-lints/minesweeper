@@ -1,16 +1,27 @@
 import React, { Component } from 'react';
+import Tile from './Tile.js';
 import './Board.css';
 
 class Board extends Component {
   constructor(props){
     super(props);
   }
+
+  componentWillMount(){
+    this.props.reset();
+  }
+
   render() {
     return (
-      <div className="Board">
+      <div className="Board" >
         {
-          this.props.list.map((listValue, i) => {
-            return <Tile key={i} data-value={listValue} />;
+          this.props.list.map((tile, i) => {
+            return <Tile 
+              key={i} 
+              data-tile={tile}
+              smileyMouseDown={this.props.smileyMouseDown}
+              smileyMouseUp={this.props.smileyMouseUp}
+            />;
           })
         }      
       </div>
@@ -18,12 +29,4 @@ class Board extends Component {
   }
 }
 
-class Tile extends Component {
-  render() {
-    return (
-      <div className="Tile">
-      </div>
-    );
-  }
-}
 export default Board;

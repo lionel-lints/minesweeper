@@ -1,0 +1,14 @@
+.Timer {
+  background-color: #222; 
+  height: 50px;
+  width: 90px;
+  color: red;
+  font-size: 60px;
+  font-height: 68px;
+  font-family:'digital-clock-font';
+}
+
+@font-face{
+ font-family:'digital-clock-font';
+ src: url('../public/DS-DIGIB.TTF');
+}

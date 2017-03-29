@@ -1,0 +1,12 @@
+.Tile {
+  height: 10%;
+  width: 10%;
+  background-color: #BDBDBD; 
+  border-style: outset;
+}
+
+.icons {
+  height: 20px;
+  margin-top: 4px;
+  width: 20px;
+}

@@ -1,0 +1,13 @@
+.Smiley {
+  height: 52px;
+  width: 52px;
+  border-style: outset;
+  border-width: 4px;
+  background-color: #BDBDBD;
+}
+
+.faceIcons {
+  height: 32px;
+  margin-top: 10px;
+  width: 32px;
+}
