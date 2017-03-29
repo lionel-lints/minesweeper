@@ -48,17 +48,21 @@ class Game extends Component {
     // map across items, check all the surrounding spots, add one for each bomb:
     return list.map((item, i, arr) => {
       if(item.value === 9) return item;
-      if(i % rowLength !== 0 && arr[i-1] && arr[i-1].value === 9) item.value += 1;
-      if(i % rowLength !== 7 && arr[i+1] && arr[i+1].value === 9) item.value += 1;
 
-      if(i % rowLength !== 0 && arr[i-1-rowLength] && arr[i-1-rowLength].value === 9) item.value += 1;
+      if(i % rowLength !== 0){
+        if(arr[i-1] && arr[i-1].value === 9) item.value += 1;
+        if(arr[i-1-rowLength] && arr[i-1-rowLength].value === 9) item.value += 1;
+        if(arr[i-1+rowLength] && arr[i-1+rowLength].value === 9) item.value += 1;
+      }
+
+      if(i % rowLength !== 7){
+        if(arr[i+1] && arr[i+1].value === 9) item.value += 1;
+        if(arr[i+1-rowLength] && arr[i+1-rowLength].value === 9) item.value += 1;
+        if(arr[i+1+rowLength] && arr[i+1+rowLength].value === 9) item.value += 1;
+      }
+
       if(arr[i-rowLength] && arr[i-rowLength].value === 9) item.value += 1;
-      if(i % rowLength !== 7 && arr[i+1-rowLength] && arr[i+1-rowLength].value === 9) item.value += 1;
-
-      if(i % rowLength !== 0 && arr[i-1+rowLength] && arr[i-1+rowLength].value === 9) item.value += 1;
       if(arr[i+rowLength] && arr[i+rowLength].value === 9) item.value += 1;
-      if(i % rowLength !== 7 && arr[i+1+rowLength] && arr[i+1+rowLength].value === 9) item.value += 1;
-
       return item;
     });
   }
