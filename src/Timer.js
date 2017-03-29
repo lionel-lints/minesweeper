@@ -4,14 +4,16 @@ import './Timer.css';
 class Timer extends Component {
   constructor(props){
     super(props);
-    this.state = {time:'000'};
   }
 
 
   componentDidMount() {
-    this.timerID = setInterval(() => {
-      this.props.tick()
-    }, 1000);
+      this.timerID = setInterval(() => {
+        if(this.props.active){
+          this.props.tick()
+        } 
+      }, 1000);
+    console.log(this.props.active)
   }
 
   componentWillUnmount() {

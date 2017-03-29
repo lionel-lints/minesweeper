@@ -21,19 +21,46 @@ class Game extends Component {
 
   addBombs = (tileId) => {
     let bombs = Number(this.bombs);
-    let gameArray = this.state.list; 
+    let gameArray = this.state.list.map(a => Object.assign({}, a));
 
     if(!this.state.activeGame){
+      // this could be refactored to deal with scaling issues when there
+      // are high % of bombs.
       while(bombs >= 0){
         let newBombIndex = Math.floor(Math.random() * this.size);
         // set bombs with 0:
-        if(gameArray[newBombIndex].value && tileId !== newBombIndex){
-          gameArray[newBombIndex].value = 0;
+        if(gameArray[newBombIndex].value !== 9 && tileId !== newBombIndex){
+          gameArray[newBombIndex].value = 9;
           bombs--;
         }
       }
-      this.setState({ activeGame: true, time: '000' });
+      // set values for items near bombs.
+      gameArray = this.addValues(gameArray);
+      
+      // do a recursive BFS to expand all the nodes here.
+
+      this.setState({ activeGame: true, time: '000', list: gameArray });
     }
+  }
+
+  addValues = (list) => {
+    const rowLength = Math.sqrt(this.size);
+    // map across items, check all the surrounding spots, add one for each bomb:
+    return list.map((item, i, arr) => {
+      if(item.value === 9) return item;
+      if(i % rowLength !== 0 && arr[i-1] && arr[i-1].value === 9) item.value += 1;
+      if(i % rowLength !== 7 && arr[i+1] && arr[i+1].value === 9) item.value += 1;
+
+      if(i % rowLength !== 0 && arr[i-1-rowLength] && arr[i-1-rowLength].value === 9) item.value += 1;
+      if(arr[i-rowLength] && arr[i-rowLength].value === 9) item.value += 1;
+      if(i % rowLength !== 7 && arr[i+1-rowLength] && arr[i+1-rowLength].value === 9) item.value += 1;
+
+      if(i % rowLength !== 0 && arr[i-1+rowLength] && arr[i-1+rowLength].value === 9) item.value += 1;
+      if(arr[i+rowLength] && arr[i+rowLength].value === 9) item.value += 1;
+      if(i % rowLength !== 7 && arr[i+1+rowLength] && arr[i+1+rowLength].value === 9) item.value += 1;
+
+      return item;
+    });
   }
 
   generateGameTiles = () => {
@@ -42,12 +69,12 @@ class Game extends Component {
       let tile = {
         show: false,
         defused: false,
-        value: 9,
+        value: 0,
         id: i
       }
       gameArray.push(tile);
     }
-    this.setState({ activeGame: false, list: gameArray });
+    this.setState({ activeGame: false, time: '000', list: gameArray });
     return gameArray;
   }
 
@@ -86,6 +113,7 @@ class Game extends Component {
     return (
       <div className="Game">
         <Header 
+          active={this.state.activeGame}
           bombs={this.bombs} 
           time={this.state.time}
           tick={this.tick}

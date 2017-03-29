@@ -31,6 +31,11 @@ class Tile extends Component {
     //and what the win condition actually looks like.
   }
   render() {
+    let tileRend = this.props.dataTile.value !== 0 ?
+      this.props.dataTile.value === 9 ? 
+        <img className='icons' src={this.flag} alt="" /> :
+        this.props.dataTile.value :
+      '';
     return (
       <div 
         className="Tile" 
@@ -38,11 +43,7 @@ class Tile extends Component {
         onMouseDown={this.props.smileyMouseDown}
         onMouseUp={this.handleClick}
       >
-        {
-          this.props.dataTile.value === 0 ?
-            <img className='icons' src={this.flag} alt="" /> :
-            ''
-        }
+        { tileRend }
       </div>
     );
   }

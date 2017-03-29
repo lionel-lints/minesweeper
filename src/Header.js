@@ -18,6 +18,7 @@ class Header extends Component {
         <BombCount bombs={this.props.bombs} />
         <Smiley smiley={this.props.smiley} reset={this.props.reset}/>
         <Timer 
+          active={this.props.active}
           time={this.props.time}
           tick={this.props.tick}
           data-value="clock"/>

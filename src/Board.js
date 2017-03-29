@@ -17,6 +17,7 @@ class Board extends Component {
         {
           this.props.list.map((tile, i) => {
             return <Tile 
+              active={this.props.active}
               addBombs={this.props.addBombs}
               dataTile={tile}
               key={tile.id} 
