@@ -42,22 +42,44 @@ class Game extends Component {
     });
   }
 
-  BFS = (index, queue) => {
-    // guard clause, when queue is empty return:
-    if (queue.length === 0) return;
+  BFS = (index, arr) => {
+    const queue = [-9,-8,-7,-1,1,7,8,9].map((item) => index + item)
+    .filter((item) => item > -1 && item < arr.length)
+    .filter((item) => !arr[item].show )
+    .filter((item) => {
+      let row = Math.sqrt(this.size);
+      if (index % row === 0){
+        return item % row !== 7; 
+      } else if (index % row === 7){
+        return item % row !== 0;
+      } else {
+        return item;
+      }
+    });
 
-    queue = queue || [-9,-8,-7,-1,1,7,8,9].map((item) => index + item)
-      .filter((item) => item > -1 && item < this.state.list.length)
-      .filter((item) => {
-        return item % Math.sqrt(this.size) !== 7 && item % Math.sqrt(this.size) !== 0;
-      })
-
-    let currentItem = this.state.list[queue.shift()];
-    // recursive case, check first item in queue
-    // if item is bomb, don't display
-    // if item has value other than 0 display
-    // if item has value 0, recursively call BFS, passing in the item index
-
+    while(queue.length > 0){
+      // pop off the front index and check it out.
+      let checkIndex = queue.shift();
+      let currentItem = arr[checkIndex];
+      if (currentItem.value === 9) continue;
+      currentItem.show = true;
+      if (currentItem.value === 0){
+        queue.push(...[-9,-8,-7,-1,1,7,8,9].map((item) => checkIndex + item )
+        .filter((item) => item > -1 && item < arr.length )
+        .filter((item) => !arr[item].show )
+        .filter((item) => {
+          let row = Math.sqrt(this.size);
+          if (checkIndex % row === 0){
+            return item % row !== 7; 
+          } else if (checkIndex % row === 7){
+            return item % row !== 0;
+          } else {
+            return item;
+          }
+        }));
+      }
+    }
+    return arr;
   }
 
   generateGameTiles = () => {
@@ -91,10 +113,14 @@ class Game extends Component {
       }
       // set values for items near bombs.
       gameArray = this.addValues(gameArray);
-      
+      //show the current Tile:
+      gameArray[tileId].show = true;
       // do a recursive BFS to expand all the nodes here.
+      gameArray = this.BFS(tileId, gameArray)
 
       this.setState({ activeGame: true, time: '000', list: gameArray });
+    } else {
+      // run the game!
     }
   }
 

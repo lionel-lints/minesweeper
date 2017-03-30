@@ -38,7 +38,7 @@ class Tile extends Component {
       '';
     return (
       <div 
-        className="Tile" 
+        className={`Tile${this.props.dataTile.show ? 'Shown': ''}`}  
         active={this.props.active}
         onMouseDown={this.props.smileyMouseDown}
         onMouseUp={this.handleClick}
