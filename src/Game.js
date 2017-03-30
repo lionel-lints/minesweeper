@@ -12,8 +12,6 @@ class Game extends Component {
       smiley: 0,
       time: '000' 
     };
-
-    // at some point size and bombs may be moved into props based on options.
     this.size = 64;
     this.bombs = '010';
   }
@@ -43,9 +41,9 @@ class Game extends Component {
   }
 
   BFS = (index, arr) => {
-    const queue = [-9,-8,-7,-1,1,7,8,9].map((item) => index + item)
+    const queue = [-9,-8,-7,-1,0,1,7,8,9].map((item) => index + item)
     .filter((item) => item > -1 && item < arr.length)
-    .filter((item) => !arr[item].show )
+    .filter((item) => !arr[item].show)
     .filter((item) => {
       let row = Math.sqrt(this.size);
       if (index % row === 0){
@@ -53,7 +51,8 @@ class Game extends Component {
       } else if (index % row === 7){
         return item % row !== 0;
       } else {
-        return item;
+        // return item to string to return index 0 along with others.
+        return (item).toString();
       }
     });
 
@@ -74,7 +73,7 @@ class Game extends Component {
           } else if (checkIndex % row === 7){
             return item % row !== 0;
           } else {
-            return item;
+            return (item).toString();
           }
         }));
       }
@@ -93,36 +92,71 @@ class Game extends Component {
       }
       gameArray.push(tile);
     }
-    this.setState({ activeGame: false, time: '000', list: gameArray });
+    this.setState({ activeGame: false, time: '000', smiley: 0, list: gameArray });
     return gameArray;
   }
 
   runGame = (tileId) => {
-    let bombs = Number(this.bombs);
     let gameArray = this.state.list.map(a => Object.assign({}, a));
 
     if(!this.state.activeGame){
+      let bombs = Number(this.bombs);
       // check and set the bombs
       while(bombs >= 0){
         let ind = Math.floor(Math.random() * this.size);
+        /* create array of values for surrounding indicies */ 
         let square = [-9,-8,-7,-1,0,1,7,8,9].map((item) => ind + item);
+        /* check the array and see if there are any bombs nearby */
         if(gameArray[ind].value !== 9 && !square.includes(tileId)){
           gameArray[ind].value = 9;
           bombs--;
         }
       }
-      // set values for items near bombs.
+
       gameArray = this.addValues(gameArray);
-      //show the current Tile:
       gameArray[tileId].show = true;
-      // do a recursive BFS to expand all the nodes here.
       gameArray = this.BFS(tileId, gameArray)
 
       this.setState({ activeGame: true, time: '000', list: gameArray });
     } else {
-      // run the game!
+      gameArray[tileId].show = true;
+      if (gameArray[tileId].value === 9){
+        // lose game steps
+        // set active game to false
+        // stop timer
+        // show all bombs, yours will be styled red.
+        // set smiley to frowny
+        this.validateGame(true);
+      } else {
+        if (gameArray[tileId].value === 0){
+          gameArray = this.BFS(tileId, gameArray)
+        } 
+        this.setState({ list: gameArray });
+      }
+    //edge cases to think about later include how to flag bombs 
+    //and what the win condition actually looks like.
     }
   }
+
+  validateGame = (bomb=false) => {
+    let smiley = this.state.smiley;
+    let gameArray = [];
+    if (bomb) {
+     smiley = 3;
+     gameArray = this.displayAll();
+    } else {
+      //you win.
+    }
+
+    this.setState({ activeGame: false, smiley: smiley, list: gameArray });
+  }
+
+  displayAll = () => {
+    let gameArray = this.state.list.map(a => Object.assign({}, a, { show: true }));
+    return gameArray;
+  }
+
+
 
   smileyMouseDown = () => {
     let newSmiley = this.state.smiley ? 0 : 1;
@@ -167,10 +201,10 @@ class Game extends Component {
           reset={this.generateGameTiles}
         />
         <Board 
-          list={this.state.list}
-          generateTiles={this.generateGameTiles}
-          runGame={this.runGame}
           active={this.state.activeGame}
+          generateTiles={this.generateGameTiles}
+          list={this.state.list}
+          runGame={this.runGame}
           smileyMouseDown={this.smileyMouseDown}
           smileyMouseUp={this.smileyMouseUp}
         />

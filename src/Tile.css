@@ -14,6 +14,46 @@
   background-color: #BDBDBD; 
 }
 
+.num1 {
+  color: blue;
+  font-weight: 900;
+  font-size: 20px;
+}
+.num2 {
+  color: green;
+  font-weight: 900;
+  font-size: 20px;
+}
+.num3 {
+  color: red;
+  font-weight: 900;
+  font-size: 20px;
+}
+.num4 {
+  color: purple;
+  font-weight: 900;
+  font-size: 20px;
+}
+.num5 {
+  color: maroon;
+  font-weight: 900;
+  font-size: 20px;
+}
+.num6 {
+  color: turquoise;
+  font-weight: 900;
+  font-size: 20px;
+}
+.num7 {
+  color: black;
+  font-weight: 900;
+  font-size: 20px;
+}
+.num8 {
+  color: gray;
+  font-weight: 900;
+  font-size: 20px;
+}
 .icons {
   height: 20px;
   margin-top: 4px;

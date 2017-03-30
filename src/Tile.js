@@ -9,41 +9,47 @@ class Tile extends Component {
   constructor(props){
     super(props);
     this.flag = redMine;
+    this.mine = mine;
   }
 
   handleClick = () => {
-    if(!this.props.active){
-      this.props.runGame(this.props.dataTile.id);
-    }
-
+    this.props.runGame(this.props.dataTile.id);
     this.props.smileyMouseUp();
-    // preflight check: if game is complete, reset game(unmount and remount the whole game component).
-    // first check if game hasn't been populated, 
-    //   if not populate game and do first visual expansion.
-    //   if so:
-    // second check value of Tile and do the following:
-    //   if value is 0-8 do surrounding expanison
-    //   if value is 9 display all tiles, and do game validation check:
-    //     if game is winning show smiley as shades
-    //     if game is losing show smiley as frowny
-    //
-    //edge cases to think about later include how to flag bombs 
-    //and what the win condition actually looks like.
   }
+
+  display = () => {
+    if (!this.props.dataTile.show){
+      // hidden items
+      return 'Tile';  
+    } else {
+      if(this.props.dataTile.value === 0 || this.props.dataTile.value === 9){
+        // 0 value item case and bomb case
+        return 'TileShown';  
+      } else {
+        // non zero non-bomb number case
+        return `TileShown num${this.props.dataTile.value}`;      
+      }
+    }
+  }
+
   render() {
-    let tileRend = this.props.dataTile.value !== 0 ?
-      this.props.dataTile.value === 9 ? 
-        <img className='icons' src={this.flag} alt="" /> :
-        this.props.dataTile.value :
-      '';
+    let bomb = <img className='icons' src={this.mine} alt="" />
     return (
       <div 
-        className={`Tile${this.props.dataTile.show ? 'Shown': ''}`}  
-        active={this.props.active}
+        className={this.display()}  
+        data-active={this.props.active}
         onMouseDown={this.props.smileyMouseDown}
         onMouseUp={this.handleClick}
       >
-        { tileRend }
+        { 
+          !this.props.dataTile.show ?
+          '' :
+          this.props.dataTile.value === 9 ?
+          bomb :
+          this.props.dataTile.value === 0 ?
+          '' :
+          this.props.dataTile.value
+        }
       </div>
     );
   }
