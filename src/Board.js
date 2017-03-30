@@ -8,7 +8,7 @@ class Board extends Component {
   }
 
   componentWillMount(){
-    this.props.reset();
+    this.props.generateTiles();
   }
 
   render() {
@@ -18,7 +18,7 @@ class Board extends Component {
           this.props.list.map((tile, i) => {
             return <Tile 
               active={this.props.active}
-              addBombs={this.props.addBombs}
+              runGame={this.props.runGame}
               dataTile={tile}
               key={tile.id} 
               smileyMouseDown={this.props.smileyMouseDown}

@@ -13,62 +13,55 @@ class Game extends Component {
       time: '000' 
     };
 
-    // at some point size and bombs may be moved into props
-    // but only if I make them editable in the options component:
+    // at some point size and bombs may be moved into props based on options.
     this.size = 64;
     this.bombs = '010';
   }
 
-  addBombs = (tileId) => {
-    let bombs = Number(this.bombs);
-    let gameArray = this.state.list.map(a => Object.assign({}, a));
-
-    if(!this.state.activeGame){
-      // this could be refactored to deal with scaling issues when there
-      // are high % of bombs.
-      while(bombs >= 0){
-        let newBombIndex = Math.floor(Math.random() * this.size);
-        // set bombs with 0:
-        if(gameArray[newBombIndex].value !== 9 && tileId !== newBombIndex){
-          gameArray[newBombIndex].value = 9;
-          bombs--;
-        }
-      }
-      // set values for items near bombs.
-      gameArray = this.addValues(gameArray);
-      
-      // do a recursive BFS to expand all the nodes here.
-
-      this.setState({ activeGame: true, time: '000', list: gameArray });
-    }
-  }
-
   addValues = (list) => {
-    const rowLength = Math.sqrt(this.size);
+    const row = Math.sqrt(this.size);
     // map across items, check all the surrounding spots, add one for each bomb:
     return list.map((item, i, arr) => {
       if(item.value === 9) return item;
 
-      if(i % rowLength !== 0){
+      if(i % row !== 0){
         if(arr[i-1] && arr[i-1].value === 9) item.value += 1;
-        if(arr[i-1-rowLength] && arr[i-1-rowLength].value === 9) item.value += 1;
-        if(arr[i-1+rowLength] && arr[i-1+rowLength].value === 9) item.value += 1;
+        if(arr[i-1-row] && arr[i-1-row].value === 9) item.value += 1;
+        if(arr[i-1+row] && arr[i-1+row].value === 9) item.value += 1;
       }
 
-      if(i % rowLength !== 7){
+      if(i % row !== 7){
         if(arr[i+1] && arr[i+1].value === 9) item.value += 1;
-        if(arr[i+1-rowLength] && arr[i+1-rowLength].value === 9) item.value += 1;
-        if(arr[i+1+rowLength] && arr[i+1+rowLength].value === 9) item.value += 1;
+        if(arr[i+1-row] && arr[i+1-row].value === 9) item.value += 1;
+        if(arr[i+1+row] && arr[i+1+row].value === 9) item.value += 1;
       }
 
-      if(arr[i-rowLength] && arr[i-rowLength].value === 9) item.value += 1;
-      if(arr[i+rowLength] && arr[i+rowLength].value === 9) item.value += 1;
+      if(arr[i-row] && arr[i-row].value === 9) item.value += 1;
+      if(arr[i+row] && arr[i+row].value === 9) item.value += 1;
       return item;
     });
   }
 
+  BFS = (index, queue) => {
+    // guard clause, when queue is empty return:
+    if (queue.length === 0) return;
+
+    queue = queue || [-9,-8,-7,-1,1,7,8,9].map((item) => index + item)
+      .filter((item) => item > -1 && item < this.state.list.length)
+      .filter((item) => {
+        return item % Math.sqrt(this.size) !== 7 && item % Math.sqrt(this.size) !== 0;
+      })
+
+    let currentItem = this.state.list[queue.shift()];
+    // recursive case, check first item in queue
+    // if item is bomb, don't display
+    // if item has value other than 0 display
+    // if item has value 0, recursively call BFS, passing in the item index
+
+  }
+
   generateGameTiles = () => {
-    let gameArray =  []; 
+    const gameArray =  []; 
     for (let i = 0; i < this.size; i++) {
       let tile = {
         show: false,
@@ -80,6 +73,29 @@ class Game extends Component {
     }
     this.setState({ activeGame: false, time: '000', list: gameArray });
     return gameArray;
+  }
+
+  runGame = (tileId) => {
+    let bombs = Number(this.bombs);
+    let gameArray = this.state.list.map(a => Object.assign({}, a));
+
+    if(!this.state.activeGame){
+      // check and set the bombs
+      while(bombs >= 0){
+        let ind = Math.floor(Math.random() * this.size);
+        let square = [-9,-8,-7,-1,0,1,7,8,9].map((item) => ind + item);
+        if(gameArray[ind].value !== 9 && !square.includes(tileId)){
+          gameArray[ind].value = 9;
+          bombs--;
+        }
+      }
+      // set values for items near bombs.
+      gameArray = this.addValues(gameArray);
+      
+      // do a recursive BFS to expand all the nodes here.
+
+      this.setState({ activeGame: true, time: '000', list: gameArray });
+    }
   }
 
   smileyMouseDown = () => {
@@ -126,8 +142,8 @@ class Game extends Component {
         />
         <Board 
           list={this.state.list}
-          reset={this.generateGameTiles}
-          addBombs={this.addBombs}
+          generateTiles={this.generateGameTiles}
+          runGame={this.runGame}
           active={this.state.activeGame}
           smileyMouseDown={this.smileyMouseDown}
           smileyMouseUp={this.smileyMouseUp}

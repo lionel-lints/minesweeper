@@ -13,7 +13,7 @@ class Tile extends Component {
 
   handleClick = () => {
     if(!this.props.active){
-      this.props.addBombs(this.props.dataTile.id);
+      this.props.runGame(this.props.dataTile.id);
     }
 
     this.props.smileyMouseUp();
