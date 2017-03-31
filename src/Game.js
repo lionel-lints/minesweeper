@@ -8,12 +8,12 @@ class Game extends Component {
     super(props);
     this.state = { 
       activeGame: false,
-      list: [],
+      list: [{ id: 0, show: false, value: 0 }],
       smiley: 0,
       time: '000' 
     };
     this.size = 64;
-    this.bombs = '010';
+    this.bombs = '001';
   }
 
   addValues = (list) => {
@@ -50,6 +50,7 @@ class Game extends Component {
       if (currentItem.value === 9) continue;
       currentItem.show = true;
       if (currentItem.value === 0){
+        // recursively add to the queue
         queue.push(...this.getSquare(checkIndex, arr));
       }
     }
@@ -58,17 +59,32 @@ class Game extends Component {
 
   generateGameTiles = () => {
     const gameArray =  []; 
-    for (let i = 0; i < this.size; i++) {
-      let tile = {
-        show: false,
-        defused: false,
-        value: 0,
-        id: i
+    if(this.validateGame() && this.state.smiley < 2){
+      this.setState({ activeGame: false, smiley: 2 });
+    } else {
+      for (let i = 0; i < this.size; i++) {
+        let tile = {
+          show: false,
+          defused: false,
+          value: 0,
+          id: i
+        }
+        gameArray.push(tile);
       }
-      gameArray.push(tile);
+      this.setState({ activeGame: false, time: '000', smiley: 0, list: gameArray });
+      return gameArray;
     }
-    this.setState({ activeGame: false, time: '000', smiley: 0, list: gameArray });
-    return gameArray;
+  }
+
+  validateGame = () => {
+    return this.state.list.reduce((prev, curr) =>{
+      if((curr.show === true && curr.value !== 9) || 
+         (curr.show === false && curr.value === 9)){
+        return prev;
+      } else {
+        return false;
+      }
+    }, true);
   }
 
   getSquare = (index, arr) => {
@@ -94,7 +110,7 @@ class Game extends Component {
     if(!this.state.activeGame){
       let bombs = Number(this.bombs);
       // check and set the bombs
-      while(bombs >= 0){
+      while(bombs > 0){
         let ind = Math.floor(Math.random() * this.size);
         /* create array of values for surrounding indicies */ 
         let square = [-9,-8,-7,-1,0,1,7,8,9].map((item) => ind + item);
@@ -113,7 +129,7 @@ class Game extends Component {
     } else {
       gameArray[tileId].show = true;
       if (gameArray[tileId].value === 9){
-        let result = this.validateGame(tileId);
+        let result = this.showTiles(tileId);
         this.setState({ list: result[1], activeGame: false, smiley: result[0] });
       } else {
         if (gameArray[tileId].value === 0){
@@ -124,7 +140,7 @@ class Game extends Component {
     }
   }
 
-  validateGame = (id) => {
+  showTiles = (id) => {
     let newSmiley = this.state.smiley;
     let gameArray = this.state.list.map(a => Object.assign({}, a, { show: true }));
     if (id === 0 || id) {
@@ -141,9 +157,6 @@ class Game extends Component {
   }
 
   smileyChange = (eventType) => {
-    // cases for mousedown: 
-    // activeGame === true
-    // activeGame === false
     if (eventType === 'mousedown' && this.state.activeGame){
       this.setState({ smiley: 1 });
     } else if (eventType === 'mouseup' && this.state.activeGame){
