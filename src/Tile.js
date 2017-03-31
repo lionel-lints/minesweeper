@@ -8,13 +8,25 @@ import defusedMine from './images/mine4.ico';
 class Tile extends Component {
   constructor(props){
     super(props);
-    this.flag = redMine;
-    this.mine = mine;
+    this.icon = {
+      flag,
+      mine,
+      redMine,
+      defusedMine
+    }
   }
 
-  handleClick = () => {
-    this.props.runGame(this.props.dataTile.id);
-    this.props.smileyMouseUp();
+  handleClick = (event) => {
+    this.props.smileyChange(event.type);
+    if (event.type === 'mousedown' && !this.props.active){
+      this.props.runGame(this.props.dataTile.id);
+    } else if (event.type === 'mouseup'){
+      if (this.props.active){
+        this.props.runGame(this.props.dataTile.id);
+      } else {
+        this.props.reset();
+      }
+    }
   }
 
   display = () => {
@@ -23,7 +35,7 @@ class Tile extends Component {
       return 'Tile';  
     } else {
       if(this.props.dataTile.value === 0 || this.props.dataTile.value === 9){
-        // 0 value item case and bomb case
+        // 0 value case and bomb case
         return 'TileShown';  
       } else {
         // non zero non-bomb number case
@@ -33,19 +45,19 @@ class Tile extends Component {
   }
 
   render() {
-    let bomb = <img className='icons' src={this.mine} alt="" />
+    let icon = <img className='icons' src={this.icon.mine} alt="" />
     return (
       <div 
         className={this.display()}  
         data-active={this.props.active}
-        onMouseDown={this.props.smileyMouseDown}
+        onMouseDown={this.handleClick}
         onMouseUp={this.handleClick}
       >
         { 
           !this.props.dataTile.show ?
           '' :
           this.props.dataTile.value === 9 ?
-          bomb :
+          icon :
           this.props.dataTile.value === 0 ?
           '' :
           this.props.dataTile.value

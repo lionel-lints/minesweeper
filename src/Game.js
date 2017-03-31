@@ -40,21 +40,8 @@ class Game extends Component {
     });
   }
 
-  BFS = (index, arr) => {
-    const queue = [-9,-8,-7,-1,0,1,7,8,9].map((item) => index + item)
-    .filter((item) => item > -1 && item < arr.length)
-    .filter((item) => !arr[item].show)
-    .filter((item) => {
-      let row = Math.sqrt(this.size);
-      if (index % row === 0){
-        return item % row !== 7; 
-      } else if (index % row === 7){
-        return item % row !== 0;
-      } else {
-        // return item to string to return index 0 along with others.
-        return (item).toString();
-      }
-    });
+  breadthFirstSearch = (index, arr) => {
+    const queue = this.getSquare(index, arr);
 
     while(queue.length > 0){
       // pop off the front index and check it out.
@@ -63,19 +50,7 @@ class Game extends Component {
       if (currentItem.value === 9) continue;
       currentItem.show = true;
       if (currentItem.value === 0){
-        queue.push(...[-9,-8,-7,-1,1,7,8,9].map((item) => checkIndex + item )
-        .filter((item) => item > -1 && item < arr.length )
-        .filter((item) => !arr[item].show )
-        .filter((item) => {
-          let row = Math.sqrt(this.size);
-          if (checkIndex % row === 0){
-            return item % row !== 7; 
-          } else if (checkIndex % row === 7){
-            return item % row !== 0;
-          } else {
-            return (item).toString();
-          }
-        }));
+        queue.push(...this.getSquare(checkIndex, arr));
       }
     }
     return arr;
@@ -94,6 +69,23 @@ class Game extends Component {
     }
     this.setState({ activeGame: false, time: '000', smiley: 0, list: gameArray });
     return gameArray;
+  }
+
+  getSquare = (index, arr) => {
+  return [-9,-8,-7,-1,0,1,7,8,9].map((item) => index + item)
+    .filter((item) => item > -1 && item < arr.length)
+    .filter((item) => !arr[item].show)
+    .filter((item) => {
+      let row = Math.sqrt(this.size);
+      if (index % row === 0){
+        return item % row !== 7; 
+      } else if (index % row === 7){
+        return item % row !== 0;
+      } else {
+        // return item toString to return index 0 along with others.
+        return (item).toString();
+      }
+    });
   }
 
   runGame = (tileId) => {
@@ -115,57 +107,48 @@ class Game extends Component {
 
       gameArray = this.addValues(gameArray);
       gameArray[tileId].show = true;
-      gameArray = this.BFS(tileId, gameArray)
+      gameArray = this.breadthFirstSearch(tileId, gameArray)
 
       this.setState({ activeGame: true, time: '000', list: gameArray });
     } else {
       gameArray[tileId].show = true;
       if (gameArray[tileId].value === 9){
-        // lose game steps
-        // set active game to false
-        // stop timer
-        // show all bombs, yours will be styled red.
-        // set smiley to frowny
-        this.validateGame(true);
+        let result = this.validateGame(tileId);
+        this.setState({ list: result[1], activeGame: false, smiley: result[0] });
       } else {
         if (gameArray[tileId].value === 0){
-          gameArray = this.BFS(tileId, gameArray)
+          gameArray = this.breadthFirstSearch(tileId, gameArray)
         } 
         this.setState({ list: gameArray });
       }
-    //edge cases to think about later include how to flag bombs 
-    //and what the win condition actually looks like.
     }
   }
 
-  validateGame = (bomb=false) => {
-    let smiley = this.state.smiley;
-    let gameArray = [];
-    if (bomb) {
-     smiley = 3;
-     gameArray = this.displayAll();
-    } else {
-      //you win.
-    }
-
-    this.setState({ activeGame: false, smiley: smiley, list: gameArray });
-  }
-
-  displayAll = () => {
+  validateGame = (id) => {
+    let newSmiley = this.state.smiley;
     let gameArray = this.state.list.map(a => Object.assign({}, a, { show: true }));
-    return gameArray;
+    if (id === 0 || id) {
+      newSmiley = 3;
+    } else {
+      newSmiley = 2;
+    }
+    return [newSmiley, gameArray];
   }
 
-
-
-  smileyMouseDown = () => {
-    let newSmiley = this.state.smiley ? 0 : 1;
-    this.setState({ smiley: newSmiley });
+  hideTiles = () => {
+    let gameArray = this.state.list.map(a => Object.assign({}, a, { show: false }));
+    this.setState({ list: gameArray, activeGame: false })
   }
 
-  smileyMouseUp = () => {
-    let newSmiley = this.state.smiley ? 0 : 1;
-    this.setState({ smiley: newSmiley });
+  smileyChange = (eventType) => {
+    // cases for mousedown: 
+    // activeGame === true
+    // activeGame === false
+    if (eventType === 'mousedown' && this.state.activeGame){
+      this.setState({ smiley: 1 });
+    } else if (eventType === 'mouseup' && this.state.activeGame){
+      this.setState({ smiley: 0});
+    }
   }
 
   tick = () => {
@@ -184,7 +167,7 @@ class Game extends Component {
     } else {
       arr[2] += 1;
     }
-    arr = arr.map((digit) => { return (digit).toString() }).join('');
+    arr = arr.map((digit) => (digit).toString()).join('');
     this.setState({ time: arr });
     return arr;
   }
@@ -195,18 +178,18 @@ class Game extends Component {
         <Header 
           active={this.state.activeGame}
           bombs={this.bombs} 
-          time={this.state.time}
-          tick={this.tick}
-          smiley={this.state.smiley}
           reset={this.generateGameTiles}
+          smiley={this.state.smiley}
+          tick={this.tick}
+          time={this.state.time}
         />
         <Board 
           active={this.state.activeGame}
           generateTiles={this.generateGameTiles}
           list={this.state.list}
+          reset={this.hideTiles}
           runGame={this.runGame}
-          smileyMouseDown={this.smileyMouseDown}
-          smileyMouseUp={this.smileyMouseUp}
+          smileyChange={this.smileyChange}
         />
       </div>
     );

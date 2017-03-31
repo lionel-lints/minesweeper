@@ -9,7 +9,7 @@ class Timer extends Component {
   componentDidMount() {
       this.timerID = setInterval(() => {
         if(this.props.active){
-          this.props.tick()
+          this.props.tick();
         } 
       }, 1000);
   }

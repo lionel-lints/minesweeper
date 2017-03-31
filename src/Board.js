@@ -20,9 +20,10 @@ class Board extends Component {
               active={this.props.active}
               runGame={this.props.runGame}
               dataTile={tile}
+              smiley={this.props.smiley}
               key={tile.id} 
-              smileyMouseDown={this.props.smileyMouseDown}
-              smileyMouseUp={this.props.smileyMouseUp}
+              reset={this.props.reset}
+              smileyChange={this.props.smileyChange}
             />;
           })
         }      

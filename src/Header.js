@@ -4,8 +4,6 @@ import BombCount from './BombCount.js';
 import Smiley from './Smiley.js';
 
 import './Header.css';
-import shades from './images/smiley.ico';
-import smiley from './images/smiley1.ico';
 
 class Header extends Component {
   constructor(props){
