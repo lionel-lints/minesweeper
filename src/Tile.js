@@ -21,11 +21,9 @@ class Tile extends Component {
     if (event.type === 'mousedown' && !this.props.active){
       this.props.runGame(this.props.dataTile.id);
     } else if (event.type === 'mouseup'){
-      if (this.props.active){
-        this.props.runGame(this.props.dataTile.id);
-      } else {
+      this.props.active ?
+        this.props.runGame(this.props.dataTile.id) :
         this.props.reset();
-      }
     }
   }
 
@@ -33,14 +31,12 @@ class Tile extends Component {
     if (!this.props.dataTile.show){
       // hidden items
       return 'Tile';  
+    } else if(this.props.dataTile.value === 0 || this.props.dataTile.value === 9){
+      // 0 value case and bomb case
+      return 'TileShown';  
     } else {
-      if(this.props.dataTile.value === 0 || this.props.dataTile.value === 9){
-        // 0 value case and bomb case
-        return 'TileShown';  
-      } else {
-        // non zero non-bomb number case
-        return `TileShown num${this.props.dataTile.value}`;      
-      }
+      // non zero non-bomb number case
+      return `TileShown num${this.props.dataTile.value}`;      
     }
   }
 

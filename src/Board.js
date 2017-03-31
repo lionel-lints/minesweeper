@@ -3,10 +3,6 @@ import Tile from './Tile.js';
 import './Board.css';
 
 class Board extends Component {
-  constructor(props){
-    super(props);
-  }
-
   componentWillMount(){
     this.props.generateTiles();
   }

@@ -13,29 +13,34 @@ class Game extends Component {
       time: '000' 
     };
     this.size = 64;
-    this.bombs = '001';
+    this.bombs = '010';
+  }
+
+  addBombs = (gameArray, id) => {
+    let bombs = Number(this.bombs);
+    /* Check and set the bombs */
+    while(bombs > 0){
+      let ind = Math.floor(Math.random() * this.size);
+      /* Create array of values for surrounding indicies */ 
+      let square = [-9,-8,-7,-1,0,1,7,8,9].map((item) => ind + item);
+      /* Check the array and see if there are any bombs nearby */
+      if(gameArray[ind].value !== 9 && !square.includes(id)){
+        gameArray[ind].value = 9;
+        bombs--;
+      }
+    }
+    return gameArray;
   }
 
   addValues = (list) => {
-    const row = Math.sqrt(this.size);
-    // map across items, check all the surrounding spots, add one for each bomb:
+    /* Map across items, check all the surrounding spots, add one for each bomb */
     return list.map((item, i, arr) => {
       if(item.value === 9) return item;
 
-      if(i % row !== 0){
-        if(arr[i-1] && arr[i-1].value === 9) item.value += 1;
-        if(arr[i-1-row] && arr[i-1-row].value === 9) item.value += 1;
-        if(arr[i-1+row] && arr[i-1+row].value === 9) item.value += 1;
-      }
-
-      if(i % row !== 7){
-        if(arr[i+1] && arr[i+1].value === 9) item.value += 1;
-        if(arr[i+1-row] && arr[i+1-row].value === 9) item.value += 1;
-        if(arr[i+1+row] && arr[i+1+row].value === 9) item.value += 1;
-      }
-
-      if(arr[i-row] && arr[i-row].value === 9) item.value += 1;
-      if(arr[i+row] && arr[i+row].value === 9) item.value += 1;
+      let surroundingIndicies = this.getSquare(i, arr);
+      surroundingIndicies.forEach((index) =>{
+        if (arr[index].value === 9) item.value += 1;
+      });
       return item;
     });
   }
@@ -44,13 +49,13 @@ class Game extends Component {
     const queue = this.getSquare(index, arr);
 
     while(queue.length > 0){
-      // pop off the front index and check it out.
+      /* Pop off the front index and check it out */
       let checkIndex = queue.shift();
       let currentItem = arr[checkIndex];
       if (currentItem.value === 9) continue;
       currentItem.show = true;
       if (currentItem.value === 0){
-        // recursively add to the queue
+        /* Recursively add to the queue */
         queue.push(...this.getSquare(checkIndex, arr));
       }
     }
@@ -76,29 +81,19 @@ class Game extends Component {
     }
   }
 
-  validateGame = () => {
-    return this.state.list.reduce((prev, curr) =>{
-      if((curr.show === true && curr.value !== 9) || 
-         (curr.show === false && curr.value === 9)){
-        return prev;
-      } else {
-        return false;
-      }
-    }, true);
-  }
-
   getSquare = (index, arr) => {
-  return [-9,-8,-7,-1,0,1,7,8,9].map((item) => index + item)
+    return [-9,-8,-7,-1,0,1,7,8,9].map((item) => index + item)
     .filter((item) => item > -1 && item < arr.length)
     .filter((item) => !arr[item].show)
     .filter((item) => {
       let row = Math.sqrt(this.size);
+      /* Filter square based on sides of Board */
       if (index % row === 0){
         return item % row !== 7; 
       } else if (index % row === 7){
         return item % row !== 0;
       } else {
-        // return item toString to return index 0 along with others.
+        /* Return item toString to return index 0 along with others */
         return (item).toString();
       }
     });
@@ -106,28 +101,28 @@ class Game extends Component {
 
   runGame = (tileId) => {
     let gameArray = this.state.list.map(a => Object.assign({}, a));
+    /* In all cases display the clicked tile */
+    gameArray[tileId].show = true;
 
     if(!this.state.activeGame){
-      let bombs = Number(this.bombs);
-      // check and set the bombs
-      while(bombs > 0){
-        let ind = Math.floor(Math.random() * this.size);
-        /* create array of values for surrounding indicies */ 
-        let square = [-9,-8,-7,-1,0,1,7,8,9].map((item) => ind + item);
-        /* check the array and see if there are any bombs nearby */
-        if(gameArray[ind].value !== 9 && !square.includes(tileId)){
-          gameArray[ind].value = 9;
-          bombs--;
-        }
+      let endOfGame = this.state.list.reduce((prev, curr) => {
+        return curr.show === true ? true : prev;
+      }, false);
+
+      gameArray = this.generateGameTiles();
+
+      if(!endOfGame){
+        /* Add values and bombs */
+        gameArray = this.addValues(this.addBombs(gameArray, tileId));
+        /* Run BFS to display tiles */
+        gameArray = this.breadthFirstSearch(tileId, gameArray)
+        this.setState({ activeGame: true, time: '000', list: gameArray });
+      } else {
+        this.setState({ activeGame: false, time: '000', list: gameArray });
       }
 
-      gameArray = this.addValues(gameArray);
-      gameArray[tileId].show = true;
-      gameArray = this.breadthFirstSearch(tileId, gameArray)
-
-      this.setState({ activeGame: true, time: '000', list: gameArray });
     } else {
-      gameArray[tileId].show = true;
+
       if (gameArray[tileId].value === 9){
         let result = this.showTiles(tileId);
         this.setState({ list: result[1], activeGame: false, smiley: result[0] });
@@ -151,6 +146,20 @@ class Game extends Component {
     return [newSmiley, gameArray];
   }
 
+  validateGame = () => {
+    return ( !this.state.activeGame ? 
+      false :
+      this.state.list.reduce((prev, curr) => {
+        if((curr.show === true && curr.value !== 9) || 
+           (curr.show === false && curr.value === 9)){
+          return prev;
+        } else {
+          return false;
+        }
+      }, true)
+    );
+  }
+
   hideTiles = () => {
     let gameArray = this.state.list.map(a => Object.assign({}, a, { show: false }));
     this.setState({ list: gameArray, activeGame: false })
@@ -165,24 +174,24 @@ class Game extends Component {
   }
 
   tick = () => {
-    let arr = this.state.time.split('');
-    arr = arr.map((digit) => { return Number(digit) });
+    let arr = this.state.time.split('').map((digit) => Number(digit));
+    /* Guard clause for timer state 999 */
     if (arr[0] + arr[1] + arr[2] === 27) return;
-    if (arr[2] + 1 === 10){
-      if (arr[1] + 1 === 10) {
+    /* Update each digit */
+    if (arr[2] === 9){
+        arr[2] = 0;
+      if (arr[1] === 9) {
         arr[0] += 1;
         arr[1] = 0;
-        arr[2] = 0;
       } else {
         arr[1] += 1;
-        arr[2] = 0;
       }
     } else {
       arr[2] += 1;
     }
+
     arr = arr.map((digit) => (digit).toString()).join('');
     this.setState({ time: arr });
-    return arr;
   }
 
   render() {
