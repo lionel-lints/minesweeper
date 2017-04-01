@@ -9,13 +9,16 @@ class Header extends Component {
   render() {
     return (
       <div className="Header">
-        <BombCount bombs={this.props.bombs} />
-        <Smiley smiley={this.props.smiley} reset={this.props.reset}/>
+        <BombCount 
+          bombs={this.props.bombs} 
+          list={this.props.list}
+          toggle={this.props.toggle} />
+        <Smiley smiley={this.props.smiley} reset={this.props.reset} />
         <Timer 
           active={this.props.active}
           time={this.props.time}
           tick={this.props.tick}
-          data-value="clock"/>
+          data-value="clock" />
       </div>
     );
   }

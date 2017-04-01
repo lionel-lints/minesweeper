@@ -105,24 +105,20 @@ class Game extends Component {
     gameArray[tileId].show = true;
 
     if(!this.state.activeGame){
-      let endOfGame = this.state.list.reduce((prev, curr) => {
-        return curr.show === true ? true : prev;
-      }, false);
-
+      let startOfGame = this.state.list.reduce((prev, curr) => {
+        return curr.show === false ? prev : false;
+      }, true);
       gameArray = this.generateGameTiles();
-
-      if(!endOfGame){
+      if(startOfGame){
         /* Add values and bombs */
         gameArray = this.addValues(this.addBombs(gameArray, tileId));
         /* Run BFS to display tiles */
         gameArray = this.breadthFirstSearch(tileId, gameArray)
         this.setState({ activeGame: true, time: '000', list: gameArray });
       } else {
-        this.setState({ activeGame: false, time: '000', list: gameArray });
+        this.setState({ time: '000', list: gameArray });
       }
-
     } else {
-
       if (gameArray[tileId].value === 9){
         let result = this.showTiles(tileId);
         this.setState({ list: result[1], activeGame: false, smiley: result[0] });
@@ -161,8 +157,23 @@ class Game extends Component {
   }
 
   hideTiles = () => {
-    let gameArray = this.state.list.map(a => Object.assign({}, a, { show: false }));
+    let gameArray = this.state.list.map((a) => Object.assign({}, a, { show: false }));
     this.setState({ list: gameArray, activeGame: false })
+  }
+
+  toggleTiles = (check, arr) => {
+    let gameArray = this.state.list.map((a) => Object.assign({}, a));
+    if (check) {
+      gameArray = this.state.list.map((item) => {
+        if(item.show === false) arr.push(item.id);
+        return Object.assign({}, item, { show: check });
+      });
+    } else {
+      while (arr.length){
+        gameArray[arr.shift()].show = false;
+      }
+    }
+    this.setState({ list: gameArray });
   }
 
   smileyChange = (eventType) => {
@@ -200,10 +211,12 @@ class Game extends Component {
         <Header 
           active={this.state.activeGame}
           bombs={this.bombs} 
+          list={this.state.list}
           reset={this.generateGameTiles}
           smiley={this.state.smiley}
           tick={this.tick}
           time={this.state.time}
+          toggle={this.toggleTiles}
         />
         <Board 
           active={this.state.activeGame}
