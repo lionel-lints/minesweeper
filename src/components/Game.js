@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import './Game.css';
+import '../styles/Game.css';
+
 import Header from './Header.js';
 import Board from './Board.js';
 

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import './Smiley.css';
-import shades from './images/smiley.ico';
-import smiley from './images/smiley1.ico';
-import smileyOh from './images/smiley2.ico';
-import smileyFail from './images/smiley3.ico';
+import '../styles/Smiley.css';
+
+import shades from '../images/smiley.ico';
+import smiley from '../images/smiley1.ico';
+import smileyFail from '../images/smiley3.ico';
+import smileyOh from '../images/smiley2.ico';
 
 class Smiley extends Component {
   constructor(props){

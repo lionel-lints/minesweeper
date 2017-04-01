@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './BombCount.css';
+import '../styles/BombCount.css';
 
 class BombCount extends Component {
   constructor(props){

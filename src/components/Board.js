@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import '../styles/Board.css';
+
 import Tile from './Tile.js';
-import './Board.css';
 
 class Board extends Component {
   componentWillMount(){

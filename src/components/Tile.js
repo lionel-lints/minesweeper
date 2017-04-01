@@ -1,29 +1,19 @@
 import React, { Component } from 'react';
-import './Tile.css';
-import flag from './images/flag.ico';
-import mine from './images/mine2.ico';
-import redMine from './images/mine.ico';
-import defusedMine from './images/mine4.ico';
+import '../styles/Tile.css';
+
+import defusedMine from '../images/mine4.ico';
+import flag from '../images/flag.ico';
+import mine from '../images/mine2.ico';
+import redMine from '../images/mine.ico';
 
 class Tile extends Component {
   constructor(props){
     super(props);
     this.icon = {
+      defusedMine,
       flag,
       mine,
-      redMine,
-      defusedMine
-    }
-  }
-
-  handleClick = (event) => {
-    this.props.smileyChange(event.type);
-    if (event.type === 'mousedown' && !this.props.active){
-      this.props.runGame(this.props.dataTile.id);
-    } else if (event.type === 'mouseup'){
-      this.props.active ?
-        this.props.runGame(this.props.dataTile.id) :
-        this.props.reset();
+      redMine
     }
   }
 
@@ -37,6 +27,17 @@ class Tile extends Component {
     } else {
       // non zero non-bomb number case
       return `TileShown num${this.props.dataTile.value}`;      
+    }
+  }
+
+  handleClick = (event) => {
+    this.props.smileyChange(event.type);
+    if (event.type === 'mousedown' && !this.props.active){
+      this.props.runGame(this.props.dataTile.id);
+    } else if (event.type === 'mouseup'){
+      this.props.active ?
+        this.props.runGame(this.props.dataTile.id) :
+        this.props.reset();
     }
   }
 

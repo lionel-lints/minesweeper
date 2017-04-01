@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import Timer from './Timer.js';
+import '../styles/Header.css';
+
 import BombCount from './BombCount.js';
 import Smiley from './Smiley.js';
-
-import './Header.css';
+import Timer from './Timer.js';
 
 class Header extends Component {
   render() {
@@ -13,7 +13,9 @@ class Header extends Component {
           bombs={this.props.bombs} 
           list={this.props.list}
           toggle={this.props.toggle} />
-        <Smiley smiley={this.props.smiley} reset={this.props.reset} />
+        <Smiley 
+          smiley={this.props.smiley}
+          reset={this.props.reset} />
         <Timer 
           active={this.props.active}
           time={this.props.time}
