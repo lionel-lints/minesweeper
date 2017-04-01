@@ -9,7 +9,7 @@ class Game extends Component {
     super(props);
     this.state = { 
       activeGame: false,
-      list: [{ id: 0, show: false, value: 0 }],
+      list: [{ id: 0, defused: false, show: false, value: 0 }],
       smiley: 0,
       time: '000' 
     };

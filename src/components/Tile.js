@@ -4,6 +4,7 @@ import '../styles/Tile.css';
 import defusedMine from '../images/mine4.ico';
 import flag from '../images/flag.ico';
 import mine from '../images/mine2.ico';
+import question from '../images/tile2.ico';
 import redMine from '../images/mine.ico';
 
 class Tile extends Component {
@@ -13,8 +14,10 @@ class Tile extends Component {
       defusedMine,
       flag,
       mine,
+      question,
       redMine
-    }
+    };
+    this.currentIcon = 'mine';
   }
 
   display = () => {
@@ -41,12 +44,17 @@ class Tile extends Component {
     }
   }
 
+  handleDoubleClick = () => {
+
+  }
+
   render() {
-    let icon = <img className='icons' src={this.icon.mine} alt="" />
+    let icon = <img className='icons' src={this.icon[this.currentIcon]} alt="" />
     return (
       <div 
         className={this.display()}  
         data-active={this.props.active}
+        onDoubleClick={this.handleDoubleClick}
         onMouseDown={this.handleClick}
         onMouseUp={this.handleClick}
       >
