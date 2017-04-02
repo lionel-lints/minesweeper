@@ -1,6 +1,6 @@
 # Mine-Sweeper
 
-A small React version of minesweeper, just a diddy.
+A React version of minesweeper, just a fun small game side project built over a few days.
 
 A production build of this project is viewable at: [mine-sweeper.surge.sh](http://mine-sweeper.surge.sh)
 
