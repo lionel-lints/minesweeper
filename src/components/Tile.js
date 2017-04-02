@@ -13,74 +13,96 @@ class Tile extends Component {
     this.icon = {
       defusedMine,
       flag,
-      mine,
+      none: mine,
       question,
       redMine
     };
-    this.currentIcon = 'mine';
   }
 
-  display = () => {
-    if (!this.props.dataTile.show || 
-        (this.currentIcon !== 'mine')){
+  displayClass = () => {
+    if (!this.props.tile.show){
       // hidden items
       return 'Tile';  
-    } else if(this.props.dataTile.value === 0 || this.props.dataTile.value === 9){
+    } else if(this.props.tile.value === 0 || this.props.tile.value === 9){
       // 0 value case and bomb case
       return 'TileShown';  
     } else {
       // non zero non-bomb number case
-      return `TileShown num${this.props.dataTile.value}`;      
+      return `TileShown num${this.props.tile.value}`;      
+    }
+  }
+
+  displayCenterItem = () => {
+    let icon = (<img 
+      className='icons' 
+      src={this.icon[this.props.tile.currentIcon]} 
+      alt="current icon" 
+    />);
+
+    /* displayed tiles */
+    if(this.props.tile.show) {
+      if(this.props.tile.value === 0){
+        return '';
+      } else if (this.props.tile.value < 9) {
+        return this.props.tile.value;
+      } else {
+        /* Case when game is active */
+        if (this.props.active){
+          return icon;
+        /* Case when flag is placed correctly */
+        } else if (this.props.tile.defused){
+          return icon;
+        } else {
+          /* for question marks, render bombs */
+          return (<img 
+            className='icons' 
+            src={
+              this.props.tile.currentIcon === 'question' ?
+              this.icon.none :
+              this.icon[this.props.tile.currentIcon]
+            } 
+            alt="current icon" 
+          />);
+        }
+      }
+
+    /* undisplayed tiles */
+    } else {
+      if (this.props.tile.currentIcon === 'none'){
+        return '';
+      } else {
+        return icon;
+      }
     }
   }
 
   handleClick = (event) => {
     this.props.smileyChange(event.type);
     if (event.type === 'mousedown' && !this.props.active){
-      this.props.runGame(this.props.dataTile.id);
+      this.props.runGame(this.props.tile.id);
     } else if (event.type === 'mouseup'){
       if (this.props.active) {
-        this.props.runGame(this.props.dataTile.id, event) 
+        this.props.runGame(this.props.tile.id, event) 
       } else {
         this.props.reset();
       }
     }
   }
 
-  nextIcon = (icon) => {
-    console.log(icon)
-    if (icon === 'mine'){
-      this.currentIcon = 'flag';
-    } else if(icon === 'flag'){
-      this.currentIcon = 'question';
-    } else {
-      this.currentIcon = 'mine';
-    }
-  }
   render() {
-    let icon = <img className='icons' src={this.icon[this.currentIcon]} alt="" />
-
+    let centerIcon = this.displayCenterItem();
     return (
       <div 
-        className={this.display()}  
+        className={this.displayClass()}  
         data-active={this.props.active}
         onMouseDown={this.handleClick}
         onMouseUp={this.handleClick}
       >
-        { 
-          !this.props.dataTile.show ?
-            !this.currentIcon === 'mine' ? 
-            icon : 
-            '' :
-          this.props.dataTile.value === 9 ?
-          icon :
-          this.props.dataTile.value === 0 ?
-          '' :
-          this.props.dataTile.value
-        }
+        { centerIcon }
       </div>
     );
   }
+
 }
 
 export default Tile;

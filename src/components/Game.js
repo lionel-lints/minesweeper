@@ -64,14 +64,52 @@ class Game extends Component {
     return arr;
   }
 
+  evaluateClick = (id, event, arr) => {
+    /* If tile is already displayed just return */
+    if (arr[id].show){
+      return;
+    } else {
+
+      /* If shift is held down, change or add flag */
+      if (event.shiftKey){
+        // add or change flag display on tile.
+        // set defused if going to flag, remove it if not.
+        arr[id] = this.nextIcon(arr[id]);
+        this.setState({ list: arr });
+      /* If value is 0 run BFS and display tile */
+      } else if (arr[id].value === 0){
+        arr[id].show = true;
+        arr = this.breadthFirstSearch(id, arr);
+        this.setState({ list: arr });
+
+      /* If value is less than 9 display tile */
+      } else if (arr[id].value < 9){
+        arr[id].show = true;
+        this.setState({ list: arr });
+
+      /* otherwise, value is 9, game FAIL  */
+      } else {
+        let result = arr.map(a => Object.assign({}, a, { show: true }));
+        result[id].currentIcon = 'redMine';
+        this.setState({ 
+          activeGame: false,
+          gameStart: false,
+          list: result, 
+          smiley: 3 
+        });
+      }
+    }
+  }
+
   generateGameTiles = () => {
     const gameArray =  []; 
     for (let i = 0; i < this.size; i++) {
       let tile = {
-        show: false,
+        currentIcon: 'none',
         defused: false,
-        value: 0,
-        id: i
+        id: i,
+        show: false,
+        value: 0
       }
       gameArray.push(tile);
     }
@@ -98,6 +136,30 @@ class Game extends Component {
         /* Return item toString to return index 0 along with others */
         return (item).toString();
       }
+    });
+  }
+
+  nextIcon = (tile) => {
+    if (tile.currentIcon === 'none'){
+      tile.currentIcon = 'flag';
+      tile.defused = true;
+    } else if(tile.currentIcon === 'flag'){
+      tile.currentIcon = 'question';
+      tile.defused = false;
+    } else {
+      tile.currentIcon = 'none';
+      tile.defused = false;
+    }
+    return tile;
+  }
+
+  reset = () => {
+    this.setState({ 
+      list: this.generateGameTiles(), 
+      activeGame: false, 
+      gameStart: true,
+      time: '000',
+      smiley: 0
     });
   }
 
@@ -130,91 +192,6 @@ class Game extends Component {
     }
   }
 
-  evaluateClick = (id, event, arr) => {
-    /* If tile is already displayed just return */
-    if (arr[id].show){
-      return;
-    } else {
-
-      /* If shift is held down, change or add flag */
-      if (event.shiftKey){
-        // add or change flag display on tile.
-        // set defused if going to flag, remove it if not.
-
-      /* If value is 0 run BFS and display tile */
-      } else if (arr[id].value === 0){
-        arr[id].show = true;
-        arr = this.breadthFirstSearch(id, arr);
-        this.setState({ list: arr });
-
-      /* If value is less than 9 display tile */
-      } else if (arr[id].value < 9){
-        arr[id].show = true;
-        this.setState({ list: arr });
-
-      /* otherwise, value is 9, game FAIL  */
-      } else {
-        let result = this.showTiles();
-        this.setState({ 
-          activeGame: false,
-          gameStart: false,
-          list: result[1], 
-          smiley: result[0] 
-        });
-      }
-    }
-  }
-
-  showTiles = (valid=false) => {
-    let newSmiley = this.state.smiley;
-    let gameArray = this.state.list.map(a => Object.assign({}, a, { show: true }));
-    if (valid) {
-      newSmiley = 2;
-    } else {
-      newSmiley = 3;
-    }
-    return [newSmiley, gameArray];
-  }
-
-  validateGame = () => {
-    return ( !this.state.activeGame ? 
-      false :
-      this.state.list.reduce((prev, curr) => {
-        if((curr.show === true && curr.value !== 9) || 
-           (curr.show === false && curr.value === 9)){
-          return prev;
-        } else {
-          return false;
-        }
-      }, true)
-    );
-  }
-
-  reset = () => {
-    this.setState({ 
-      list: this.generateGameTiles(), 
-      activeGame: false, 
-      gameStart: true,
-      time: '000',
-      smiley: 0
-    });
-  }
-
-  toggleTiles = (check, arr) => {
-    let gameArray = this.state.list.map((a) => Object.assign({}, a));
-    if (check) {
-      gameArray = this.state.list.map((item) => {
-        if(item.show === false) arr.push(item.id);
-        return Object.assign({}, item, { show: check });
-      });
-    } else {
-      while (arr.length){
-        gameArray[arr.shift()].show = false;
-      }
-    }
-    this.setState({ list: gameArray });
-  }
-
   smileyChange = (eventType) => {
     if (eventType === 'mousedown' && this.state.activeGame){
       this.setState({ smiley: 1 });
@@ -244,6 +221,39 @@ class Game extends Component {
     this.setState({ time: arr });
   }
 
+  toggleTiles = (check, arr) => {
+    let gameArray = this.state.list.map((a) => Object.assign({}, a));
+    if (check) {
+      gameArray = this.state.list.map((item) => {
+        if(item.show === false) arr.push(item.id);
+        return Object.assign({}, item, { show: check });
+      });
+    } else {
+      while (arr.length){
+        gameArray[arr.shift()].show = false;
+      }
+    }
+    this.setState({ list: gameArray });
+  }
+
+  validateGame = () => {
+    const gameValid = this.state.list.reduce((prev, curr) => {
+      if((curr.show === true && curr.value !== 9) || 
+         (curr.defused === true && curr.value === 9)){
+        return prev;
+      } else {
+        return false;
+      }
+    }, true);
+
+    if(!this.state.activeGame || !gameValid){
+      this.reset();
+    } else {
+      let result = this.state.list.map(a => Object.assign({}, a, { show: true }));
+      this.setState({ activeGame: false, gameStart: false, list: result, smiley: 2 });
+    }
+  }
+
   render() {
     return (
       <div className="Game">
@@ -252,11 +262,11 @@ class Game extends Component {
           bombs={this.bombs} 
           list={this.state.list}
           reset={this.reset}
-          validateGame={this.validateGame}
           smiley={this.state.smiley}
           tick={this.tick}
           time={this.state.time}
           toggle={this.toggleTiles}
+          validateGame={this.validateGame}
         />
         <Board 
           active={this.state.activeGame}

@@ -18,11 +18,7 @@ class Smiley extends Component {
   }
 
   handleClick = () => {
-    if(this.props.validateGame() && this.state.smiley < 2){
-      this.setState({ activeGame: false, gameStart: false, smiley: 2 });
-    } else {
-      this.props.reset();
-    }
+    this.props.validateGame()
   }
 
   render() {

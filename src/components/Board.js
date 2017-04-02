@@ -16,7 +16,7 @@ class Board extends Component {
             return <Tile 
               active={this.props.active}
               runGame={this.props.runGame}
-              dataTile={tile}
+              tile={tile}
               smiley={this.props.smiley}
               key={tile.id} 
               reset={this.props.reset}

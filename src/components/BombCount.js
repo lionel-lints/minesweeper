@@ -16,12 +16,16 @@ class BombCount extends Component {
   }
   
   render() {
+    const defused = this.props.list.reduce((prev, curr) => {
+      if (prev >= this.props.bombs) return prev;
+      return curr.defused ? prev + 1: prev;
+    }, 0);
     return (
       <div 
         className="BombCount"
         onMouseDown={this.handleClick}
         onMouseUp={this.handleClick}>
-        {this.props.bombs} 
+        {this.props.bombs - defused} 
       </div>
     );
   }
