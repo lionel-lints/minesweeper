@@ -20,12 +20,17 @@ class BombCount extends Component {
       if (prev >= this.props.bombs) return prev;
       return curr.defused ? prev + 1: prev;
     }, 0);
+    let array = (this.props.bombs - defused).toString().split('');
+    while(array.length < 3){
+      array.unshift('0');
+    }
+    array = array.join('');
     return (
       <div 
         className="BombCount"
         onMouseDown={this.handleClick}
         onMouseUp={this.handleClick}>
-        {this.props.bombs - defused} 
+        {array} 
       </div>
     );
   }
