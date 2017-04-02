@@ -9,6 +9,8 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <h2>Welcome to Lionel's React Minesweeper</h2>
+          <h4>To defuse a mine, hold shift while clicking tile.</h4>
+          <h4>To validate your game, click the smiley face.</h4>
         </div>
         <Game />
       </div>
