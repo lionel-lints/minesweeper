@@ -15,12 +15,12 @@ class Header extends Component {
           toggle={this.props.toggle} />
         <Smiley 
           smiley={this.props.smiley}
+          validateGame={this.props.validateGame}
           reset={this.props.reset} />
         <Timer 
           active={this.props.active}
           time={this.props.time}
-          tick={this.props.tick}
-          data-value="clock" />
+          tick={this.props.tick} />
       </div>
     );
   }

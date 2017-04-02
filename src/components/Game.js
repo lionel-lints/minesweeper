@@ -9,7 +9,8 @@ class Game extends Component {
     super(props);
     this.state = { 
       activeGame: false,
-      list: [{ id: 0, defused: false, show: false, value: 0 }],
+      gameStart: true,
+      list: [],
       smiley: 0,
       time: '000' 
     };
@@ -65,19 +66,19 @@ class Game extends Component {
 
   generateGameTiles = () => {
     const gameArray =  []; 
-    if(this.validateGame() && this.state.smiley < 2){
-      this.setState({ activeGame: false, smiley: 2 });
-    } else {
-      for (let i = 0; i < this.size; i++) {
-        let tile = {
-          show: false,
-          defused: false,
-          value: 0,
-          id: i
-        }
-        gameArray.push(tile);
+    for (let i = 0; i < this.size; i++) {
+      let tile = {
+        show: false,
+        defused: false,
+        value: 0,
+        id: i
       }
-      this.setState({ activeGame: false, time: '000', smiley: 0, list: gameArray });
+      gameArray.push(tile);
+    }
+    /* initial state needs to be set */
+    if (this.state.list.length === 0){
+      this.setState({ list: gameArray });
+    } else {
       return gameArray;
     }
   }
@@ -100,45 +101,77 @@ class Game extends Component {
     });
   }
 
-  runGame = (tileId) => {
+  runGame = (tileId, event) => {
+    /* In all cases, clone list */
     let gameArray = this.state.list.map(a => Object.assign({}, a));
-    /* In all cases display the clicked tile */
-    gameArray[tileId].show = true;
 
-    if(!this.state.activeGame){
-      let startOfGame = this.state.list.reduce((prev, curr) => {
-        return curr.show === false ? prev : false;
-      }, true);
+    /* if start of new game */
+    if(!this.state.activeGame && this.state.gameStart){
+
+      /* Add game tiles */
       gameArray = this.generateGameTiles();
-      if(startOfGame){
-        /* Add values and bombs */
-        gameArray = this.addValues(this.addBombs(gameArray, tileId));
-        /* Run BFS to display tiles */
-        gameArray = this.breadthFirstSearch(tileId, gameArray)
-        this.setState({ activeGame: true, time: '000', list: gameArray });
-      } else {
-        this.setState({ time: '000', list: gameArray });
-      }
+      /* Add values and bombs */
+      gameArray = this.addValues(this.addBombs(gameArray, tileId));
+      /* Set currentId to show & run BFS to display tiles */
+      gameArray[tileId].show = true;
+      gameArray = this.breadthFirstSearch(tileId, gameArray)
+      this.setState({ activeGame: true, time: '000', list: gameArray });
+
+      /* if end of game, reset game */
+    } else if (!this.state.activeGame && !this.state.gameStart){
+
+      /* Reset game tiles, and reset game */
+      gameArray = this.generateGameTiles();
+      this.setState({ time: '000', list: gameArray, gameStart: true });
+
+      /* Game is active, evaluate click */
     } else {
-      if (gameArray[tileId].value === 9){
-        let result = this.showTiles(tileId);
-        this.setState({ list: result[1], activeGame: false, smiley: result[0] });
+      this.evaluateClick(tileId, event, gameArray);
+    }
+  }
+
+  evaluateClick = (id, event, arr) => {
+    /* If tile is already displayed just return */
+    if (arr[id].show){
+      return;
+    } else {
+
+      /* If shift is held down, change or add flag */
+      if (event.shiftKey){
+        // add or change flag display on tile.
+        // set defused if going to flag, remove it if not.
+
+      /* If value is 0 run BFS and display tile */
+      } else if (arr[id].value === 0){
+        arr[id].show = true;
+        arr = this.breadthFirstSearch(id, arr);
+        this.setState({ list: arr });
+
+      /* If value is less than 9 display tile */
+      } else if (arr[id].value < 9){
+        arr[id].show = true;
+        this.setState({ list: arr });
+
+      /* otherwise, value is 9, game FAIL  */
       } else {
-        if (gameArray[tileId].value === 0){
-          gameArray = this.breadthFirstSearch(tileId, gameArray)
-        } 
-        this.setState({ list: gameArray });
+        let result = this.showTiles();
+        this.setState({ 
+          activeGame: false,
+          gameStart: false,
+          list: result[1], 
+          smiley: result[0] 
+        });
       }
     }
   }
 
-  showTiles = (id) => {
+  showTiles = (valid=false) => {
     let newSmiley = this.state.smiley;
     let gameArray = this.state.list.map(a => Object.assign({}, a, { show: true }));
-    if (id === 0 || id) {
-      newSmiley = 3;
-    } else {
+    if (valid) {
       newSmiley = 2;
+    } else {
+      newSmiley = 3;
     }
     return [newSmiley, gameArray];
   }
@@ -157,9 +190,14 @@ class Game extends Component {
     );
   }
 
-  hideTiles = () => {
-    let gameArray = this.state.list.map((a) => Object.assign({}, a, { show: false }));
-    this.setState({ list: gameArray, activeGame: false })
+  reset = () => {
+    this.setState({ 
+      list: this.generateGameTiles(), 
+      activeGame: false, 
+      gameStart: true,
+      time: '000',
+      smiley: 0
+    });
   }
 
   toggleTiles = (check, arr) => {
@@ -213,7 +251,8 @@ class Game extends Component {
           active={this.state.activeGame}
           bombs={this.bombs} 
           list={this.state.list}
-          reset={this.generateGameTiles}
+          reset={this.reset}
+          validateGame={this.validateGame}
           smiley={this.state.smiley}
           tick={this.tick}
           time={this.state.time}
@@ -221,9 +260,9 @@ class Game extends Component {
         />
         <Board 
           active={this.state.activeGame}
-          generateTiles={this.generateGameTiles}
+          generateGameTiles={this.generateGameTiles}
           list={this.state.list}
-          reset={this.hideTiles}
+          reset={this.reset}
           runGame={this.runGame}
           smileyChange={this.smileyChange}
         />

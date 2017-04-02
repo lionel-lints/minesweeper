@@ -21,7 +21,8 @@ class Tile extends Component {
   }
 
   display = () => {
-    if (!this.props.dataTile.show){
+    if (!this.props.dataTile.show || 
+        (this.currentIcon !== 'mine')){
       // hidden items
       return 'Tile';  
     } else if(this.props.dataTile.value === 0 || this.props.dataTile.value === 9){
@@ -38,29 +39,39 @@ class Tile extends Component {
     if (event.type === 'mousedown' && !this.props.active){
       this.props.runGame(this.props.dataTile.id);
     } else if (event.type === 'mouseup'){
-      this.props.active ?
-        this.props.runGame(this.props.dataTile.id) :
+      if (this.props.active) {
+        this.props.runGame(this.props.dataTile.id, event) 
+      } else {
         this.props.reset();
+      }
     }
   }
 
-  handleDoubleClick = () => {
-
+  nextIcon = (icon) => {
+    console.log(icon)
+    if (icon === 'mine'){
+      this.currentIcon = 'flag';
+    } else if(icon === 'flag'){
+      this.currentIcon = 'question';
+    } else {
+      this.currentIcon = 'mine';
+    }
   }
-
   render() {
     let icon = <img className='icons' src={this.icon[this.currentIcon]} alt="" />
+
     return (
       <div 
         className={this.display()}  
         data-active={this.props.active}
-        onDoubleClick={this.handleDoubleClick}
         onMouseDown={this.handleClick}
         onMouseUp={this.handleClick}
       >
         { 
           !this.props.dataTile.show ?
-          '' :
+            !this.currentIcon === 'mine' ? 
+            icon : 
+            '' :
           this.props.dataTile.value === 9 ?
           icon :
           this.props.dataTile.value === 0 ?

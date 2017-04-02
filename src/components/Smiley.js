@@ -17,9 +17,17 @@ class Smiley extends Component {
     }
   }
 
+  handleClick = () => {
+    if(this.props.validateGame() && this.state.smiley < 2){
+      this.setState({ activeGame: false, gameStart: false, smiley: 2 });
+    } else {
+      this.props.reset();
+    }
+  }
+
   render() {
     return (
-      <div className="Smiley" onClick={this.props.reset}>
+      <div className="Smiley" onClick={this.handleClick}>
         <img className="faceIcons" src={this.smiley[this.props.smiley]} alt="smiley face icon" />
       </div>
     );

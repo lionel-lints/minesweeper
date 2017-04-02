@@ -5,7 +5,7 @@ import Tile from './Tile.js';
 
 class Board extends Component {
   componentWillMount(){
-    this.props.generateTiles();
+    this.props.generateGameTiles();
   }
 
   render() {
