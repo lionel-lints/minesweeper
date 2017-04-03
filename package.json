@@ -41,6 +41,7 @@
     "promise": "7.1.1",
     "react-dev-utils": "^0.5.2",
     "style-loader": "0.13.1",
+    "sw-precache": "^5.1.0",
     "url-loader": "0.5.7",
     "webpack": "1.14.0",
     "webpack-dev-server": "1.16.2",
@@ -49,7 +50,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
+    "build": "node scripts/build.js && sw-precache --config=sw-precache-config.js",
     "test": "node scripts/test.js --env=jsdom",
     "lint": "node_modules/eslint/bin/eslint.js ./src"
   },
