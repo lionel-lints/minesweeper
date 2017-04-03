@@ -1,29 +1,43 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import '../styles/Header.css';
 
-import BombCount from './BombCount.js';
-import Smiley from './Smiley.js';
-import Timer from './Timer.js';
+import BombCount from './BombCount';
+import Smiley from './Smiley';
+import Timer from './Timer';
 
 class Header extends Component {
+
   render() {
     return (
       <div className="Header">
-        <BombCount 
-          bombs={this.props.bombs} 
+        <BombCount
+          bombs={this.props.bombs}
           list={this.props.list}
-          toggle={this.props.toggle} />
-        <Smiley 
+          toggle={this.props.toggle}
+        />
+        <Smiley
           smiley={this.props.smiley}
           validateGame={this.props.validateGame}
-          reset={this.props.reset} />
-        <Timer 
+        />
+        <Timer
           active={this.props.active}
           time={this.props.time}
-          tick={this.props.tick} />
+          tick={this.props.tick}
+        />
       </div>
     );
   }
 }
+
+Header.propTypes = {
+  active: PropTypes.bool.isRequired,
+  bombs: PropTypes.string.isRequired,
+  list: PropTypes.array.isRequired,
+  smiley: PropTypes.number.isRequired,
+  tick: PropTypes.func.isRequired,
+  time: PropTypes.string.isRequired,
+  toggle: PropTypes.func.isRequired,
+  validateGame: PropTypes.func.isRequired,
+};
 
 export default Header;

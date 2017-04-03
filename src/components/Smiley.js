@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import '../styles/Smiley.css';
 
 import shades from '../images/smiley.ico';
@@ -7,27 +7,32 @@ import smileyFail from '../images/smiley3.ico';
 import smileyOh from '../images/smiley2.ico';
 
 class Smiley extends Component {
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
     this.smiley = {
-      '0': smiley,
-      '1': smileyOh,
-      '2': shades,
-      '3': smileyFail
-    }
+      0: smiley,
+      1: smileyOh,
+      2: shades,
+      3: smileyFail,
+    };
   }
 
   handleClick = () => {
-    this.props.validateGame()
+    this.props.validateGame();
   }
 
   render() {
     return (
-      <div className="Smiley" onClick={this.handleClick}>
+      <button className="Smiley" onClick={this.handleClick} >
         <img className="faceIcons" src={this.smiley[this.props.smiley]} alt="smiley face icon" />
-      </div>
+      </button>
     );
   }
 }
+
+Smiley.propTypes = {
+  smiley: PropTypes.number.isRequired,
+  validateGame: PropTypes.func.isRequired,
+};
 
 export default Smiley;

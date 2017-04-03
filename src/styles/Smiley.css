@@ -6,8 +6,9 @@
   background-color: #BDBDBD;
 }
 
+.Smiley:focus {outline:0;}
+
 .faceIcons {
   height: 32px;
-  margin-top: 10px;
   width: 32px;
 }
