@@ -1,0 +1,8 @@
+.AuthButtons {
+  height: 20%;
+  width: 50%;
+  background-color: #BDBDBD; 
+  border-style: outset;
+}
+
+.AuthButtons:focus {outline:0;}

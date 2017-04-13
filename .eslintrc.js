@@ -15,11 +15,12 @@ module.exports = {
   },
   "env": {
     "node": true,
+    "browser": true,
     "es6": true
   },
   "rules": {
     "no-console": 1,
-    "comma-dangle": 2,
+    "comma-dangle": 0,
     "no-unreachable": 2,
     "no-param-reassign": 0,
     "no-unused-vars": 0,

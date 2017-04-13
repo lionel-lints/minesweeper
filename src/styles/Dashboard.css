@@ -1,0 +1,10 @@
+.Dashboard {
+  text-align: center;
+  height: 60px; 
+  margin: 15px;
+  background-color: #BDBDBD; 
+  border-style: inset;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
