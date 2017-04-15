@@ -31,14 +31,13 @@ class App extends Component {
     })
     .then(response => response.json())
     .then((data) => {
-      if (data.status !== 'error') {
+      if (data.status !== '304') {
         this.setState({
           user: data[0],
           isLoggedIn: true
         });
       }
     }).catch((error) => {
-      // console.log('ERROR: ', error.message);
     });
   }
 
