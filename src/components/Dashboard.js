@@ -8,7 +8,10 @@ class Dashboard extends Component {
   render() {
     return (
       <div>
-        <AuthButtons isLoggedIn={this.props.isLoggedIn} />
+        <AuthButtons
+          isLoggedIn={this.props.isLoggedIn}
+          logOut={this.props.logOut}
+        />
       </div>
     );
   }
@@ -16,6 +19,7 @@ class Dashboard extends Component {
 
 Dashboard.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
+  logOut: PropTypes.func.isRequired,
 };
 
 export default Dashboard;

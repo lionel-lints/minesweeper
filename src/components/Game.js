@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import '../styles/Game.css';
 
 import Header from './Header';
@@ -268,5 +268,9 @@ class Game extends Component {
     );
   }
 }
+
+Game.propTypes = {
+  isLoggedIn: PropTypes.bool.isRequired,
+};
 
 export default Game;

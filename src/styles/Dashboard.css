@@ -1,6 +1,7 @@
 .Dashboard {
   text-align: center;
   height: 60px; 
+  width: 300px;
   margin: 15px;
   background-color: #BDBDBD; 
   border-style: inset;

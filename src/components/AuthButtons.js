@@ -10,8 +10,7 @@ class AuthButtons extends Component {
       return (
         <div >
           <h4> You have logged in!!</h4>
-          <button className="AuthButtons">login</button>
-          <button className="AuthButtons">register</button>
+          <button onClick={this.props.logOut}className="AuthButtons">logout</button>
         </div>
       );
     }
@@ -27,6 +26,7 @@ class AuthButtons extends Component {
 
 AuthButtons.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
+  logOut: PropTypes.func.isRequired,
 };
 
 export default AuthButtons;
