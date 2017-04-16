@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import '../styles/App.css';
 
 import Game from './Game';
 import Dashboard from './Dashboard';
 
-/* eslint-disable no-console */
 class App extends Component {
   constructor(props) {
     super(props);
@@ -58,13 +58,11 @@ class App extends Component {
     })
     .then(response => response.json())
     .then((data) => {
-      console.log(data);
       this.setState({
         user: data.user,
         isLoggedIn: data.isLoggedIn
       });
     }).catch((error) => {
-      console.log('ERROR: ', error.message);
     });
   }
 
@@ -74,18 +72,20 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <h2>Welcome to Lionel&apos;s React Minesweeper</h2>
-          <h4>To defuse a mine, hold shift while clicking tile.</h4>
-          <h4>To validate your game, click the smiley face.</h4>
+      <Router>
+        <div className="App">
+          <div className="App-header">
+            <h2>Welcome to Lionel&apos;s React Minesweeper</h2>
+            <h4>To defuse a mine, hold shift while clicking tile.</h4>
+            <h4>To validate your game, click the smiley face.</h4>
+          </div>
+          <Game isLoggedIn={this.state.isLoggedIn} />
+          <Dashboard
+            isLoggedIn={this.state.isLoggedIn}
+            logOut={this.logOut}
+          />
         </div>
-        <Game isLoggedIn={this.state.isLoggedIn} />
-        <Dashboard
-          isLoggedIn={this.state.isLoggedIn}
-          logOut={this.logOut}
-        />
-      </div>
+      </Router>
     );
   }
 }
