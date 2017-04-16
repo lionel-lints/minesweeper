@@ -7,12 +7,11 @@ import {
   withRouter
 } from 'react-router-dom';
 
-// 1. Click the public page
-// 2. Click the protected page
-// 3. Log in
-// 4. Click the back button, note the URL each time
+import App from './App';
 
-const fakeAuth = {
+import '../styles/Base.css';
+
+const Auth = {
   isAuthenticated: false,
   authenticate(cb) {
     this.isAuthenticated = true;
@@ -25,12 +24,12 @@ const fakeAuth = {
 };
 
 const AuthButton = withRouter(({ history }) => (
-  fakeAuth.isAuthenticated ? (
+  Auth.isAuthenticated ? (
     <p>
       Welcome!
       <button
         onClick={() => {
-          fakeAuth.signout(() => history.push('/'));
+          Auth.signout(() => history.push('/'));
         }}
       >
         Sign out</button>
@@ -44,7 +43,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      (fakeAuth.isAuthenticated ? (
+      (Auth.isAuthenticated ? (
         <Component {...props} />
       ) : (
         <Redirect
@@ -72,7 +71,7 @@ class Login extends React.Component {
   }
 
   login = () => {
-    fakeAuth.authenticate(() => {
+    Auth.authenticate(() => {
       this.setState({ redirectToReferrer: true });
     });
   }
@@ -99,19 +98,25 @@ class Login extends React.Component {
 Login.propTypes = {
   location: PropTypes.object.isRequired,
 };
-const AuthExample = () => (
+
+const Base = () => (
   <Router>
-    <div>
+    <div className="Base">
+      <div className="Base-header">
+        <h2>Welcome to Lionel&apos;s React Minesweeper</h2>
+        <h4>To defuse a mine, hold shift while clicking tile.</h4>
+        <h4>To validate your game, click the smiley face.</h4>
+      </div>
+      <Route path="/public" component={App} />
+      <Route path="/login" component={Login} />
+      <PrivateRoute path="/protected" component={Protected} />
       <AuthButton />
       <ul>
         <li><Link to="/public">Public Page</Link></li>
         <li><Link to="/protected">Protected Page</Link></li>
       </ul>
-      <Route path="/public" component={Public} />
-      <Route path="/login" component={Login} />
-      <PrivateRoute path="/protected" component={Protected} />
     </div>
   </Router>
 );
 
-export default AuthExample;
+export default Base;
