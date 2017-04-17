@@ -8,18 +8,50 @@ import {
 } from 'react-router-dom';
 
 import App from './App';
+import Dashboard from './Dashboard';
+import LogInForm from './LogInForm';
+import SignUpForm from './SignUpForm';
 
 import '../styles/Base.css';
 
 const Auth = {
   isAuthenticated: false,
   authenticate(cb) {
-    this.isAuthenticated = true;
-    setTimeout(cb, 100); // fake async
+    fetch('http://localhost:3001/auth/loggedIn', {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Cache: 'no-cache',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then((data) => {
+      if (data.status === '200') {
+        this.isAuthenticated = true;
+        cb();
+      }
+    }).catch((error) => {
+      this.isAuthenticated = false;
+    });
   },
   signout(cb) {
-    this.isAuthenticated = false;
-    setTimeout(cb, 100);
+    /* log out user */
+    fetch('http://localhost:3001/auth/logout', {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Cache: 'no-cache',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then((data) => {
+      this.isAuthenticated = false;
+    }).catch((error) => {
+    });
   }
 };
 
@@ -43,7 +75,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      (Auth.isAuthenticated ? (
+      (Auth.isAuthenticated() ? (
         <Component {...props} />
       ) : (
         <Redirect
@@ -58,12 +90,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 );
 
 PrivateRoute.propTypes = {
-  component: PropTypes.object.isRequired,
+  component: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
 };
-
-const Public = () => <h3>Public</h3>;
-const Protected = () => <h3>Protected</h3>;
 
 class Login extends React.Component {
   state = {
@@ -88,7 +117,7 @@ class Login extends React.Component {
 
     return (
       <div>
-        <p>You must log in to view the page at {from.pathname}</p>
+        <p>You must log in to view the {from.pathname} page</p>
         <button onClick={this.login}>Log in</button>
       </div>
     );
@@ -108,13 +137,13 @@ const Base = () => (
         <h4>To validate your game, click the smiley face.</h4>
       </div>
       <Route path="/public" component={App} />
-      <Route path="/login" component={Login} />
-      <PrivateRoute path="/protected" component={Protected} />
+      <Route path="/login" component={LogInForm} />
+      <Route path="/register" component={SignUpForm} />
+      <PrivateRoute path="/dashboard" component={Dashboard} />
       <AuthButton />
-      <ul>
-        <li><Link to="/public">Public Page</Link></li>
-        <li><Link to="/protected">Protected Page</Link></li>
-      </ul>
+      <Link to="/public"><button>Continue without logging in</button></Link>
+      <button><Link to="/login">Log in</Link></button>
+      <button><Link to="/register">Sign up</Link></button>
     </div>
   </Router>
 );
