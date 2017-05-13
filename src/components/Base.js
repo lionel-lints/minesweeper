@@ -67,7 +67,12 @@ const AuthButton = withRouter(({ history }) => (
         Sign out</button>
     </p>
   ) : (
-    <p>You are not logged in.</p>
+    <div>
+      <p>You are not logged in.</p>
+      <Link to="/public"><button>Continue without logging in</button></Link>
+      <button><Link to="/login">Log in</Link></button>
+      <button><Link to="/register">Sign up</Link></button>
+    </div>
   )
 ));
 
@@ -136,14 +141,13 @@ const Base = () => (
         <h4>To defuse a mine, hold shift while clicking tile.</h4>
         <h4>To validate your game, click the smiley face.</h4>
       </div>
-      <Route path="/public" component={App} />
-      <Route path="/login" component={LogInForm} />
-      <Route path="/register" component={SignUpForm} />
-      <PrivateRoute path="/dashboard" component={Dashboard} />
-      <AuthButton />
-      <Link to="/public"><button>Continue without logging in</button></Link>
-      <button><Link to="/login">Log in</Link></button>
-      <button><Link to="/register">Sign up</Link></button>
+      <div className="Base-main">
+        <Route path="/public" component={App} />
+        <Route path="/login" component={LogInForm} />
+        <Route path="/register" component={SignUpForm} />
+        <PrivateRoute path="/dashboard" component={Dashboard} />
+        <AuthButton />
+      </div>
     </div>
   </Router>
 );

@@ -14,3 +14,11 @@
   color: lightgrey;
 }
 
+.Base-main {
+  text-align: center;
+  width: 60%;
+  height: 70%;
+  display: flex;
+  justify-content: space-around;
+}
+

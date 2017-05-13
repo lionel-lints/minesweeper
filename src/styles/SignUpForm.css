@@ -1,11 +1,15 @@
-.LogInForm {
+.SignUpForm {
   text-align: center;
-  height: 60px; 
   width: 300px;
+  height: 170px;
   margin: 15px;
   background-color: #BDBDBD; 
   border-style: inset;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.SignUpForm input {
+  margin-top: 15px;
 }
